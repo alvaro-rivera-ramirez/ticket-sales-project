@@ -1,0 +1,11 @@
+version: '3'
+services:
+  db-server:
+    image: postgres:alpine3.19
+    env_file: ./.env
+    environment:
+       POSTGRES_DB: $DB_NAME
+       POSTGRES_USER: $DB_USER
+       POSTGRES_PASSWORD: $DB_PASSWORD
+    ports:
+      - $DB_LOCAL_PORT:$DB_SERVER_PORT

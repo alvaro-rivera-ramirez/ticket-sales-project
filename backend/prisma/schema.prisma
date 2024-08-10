@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role{
+  roleId Int @id @default(autoincrement()) @map("role_id")
+  users User[]
+}
+
+model User {
+  userId      Int      @id @default(autoincrement()) @map("user_id")
+  dni String @db.VarChar(10) @unique
+  name    String
+  lastname String
+  email   String   @unique
+  password String
+  phone String
+  role    Role     @relation(fields: [roleId],references: [roleId])
+  roleId Int
+  payments Payment[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CategoryEvent{
+  categoryEventId Int @id @default(autoincrement()) @map("category_event_id")
+  name String
+  events Event[]
+}
+
+model Event{
+  eventId Int @id @default(autoincrement()) @map("event_id")
+  category CategoryEvent @relation(fields: [categoryId],references: [categoryEventId])
+  categoryId Int
+  startDate DateTime
+  endDate DateTime
+  title String
+  description String
+  scheduleImg String @db.VarChar(255)
+  bannerImg String @db.VarChar(255)
+  capacity Int
+  stage Stage @relation(fields: [stageId],references: [stageId])
+  stageId Int
+  payments Payment[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Country{
+  countryId Int @id @default(autoincrement()) @map("country_id")
+  name String
+  stages Stage[]
+}
+
+model Stage{
+  stageId Int @id @default(autoincrement()) @map("stage_id")
+  country Country @relation(fields: [countryId],references: [countryId])
+  countryId Int
+  name String
+  capacity Int
+  address String @db.VarChar(255)
+  addressReferences String? @db.VarChar(100)
+  stageSections StageSection[]
+  events Event[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StageSection{
+  stageSectionId Int @id @default(autoincrement()) @map("stage_section_id")
+  name String @db.VarChar(100)
+  capacity Int
+  price Decimal
+  stage Stage @relation(fields: [stageId],references: [stageId])
+  stageId Int
+  paymentDetails PaymentDetail[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PaymentMethod{
+  paymentMethodId Int @id @default(autoincrement()) @map("payment_method_id")
+  name String @db.VarChar(50)
+  payments Payment[]
+}
+
+model Payment{
+  paymentId Int @id @default(autoincrement()) @map("payment_id")
+  paymentMethod PaymentMethod @relation(fields: [paymentMethodId],references: [paymentMethodId])
+  paymentMethodId Int
+  user User @relation(fields: [userId],references: [userId])
+  userId Int
+  event Event @relation(fields: [eventId],references: [eventId])
+  eventId Int
+  paymentDetails PaymentDetail[]
+  createdAt DateTime @default(now())
+}
+
+model PaymentDetail{
+  paymentDetailId Int @id @default(autoincrement()) @map("payment_detail_id")
+  stageSection StageSection @relation(fields: [stageSectionId],references: [stageSectionId])
+  stageSectionId Int
+  payment Payment @relation(fields: [paymentId],references: [paymentId])
+  paymentId Int
+  quantity Int
+  unitPrice Decimal
+}
+
+
