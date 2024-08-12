@@ -15,27 +15,32 @@ datasource db {
 
 model Role{
   roleId Int @id @default(autoincrement()) @map("role_id")
+  name String @db.VarChar(40)
   users User[]
+  active  Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model User {
   userId      Int      @id @default(autoincrement()) @map("user_id")
   dni String @db.VarChar(10) @unique
-  name    String
-  lastname String
+  firstname    String @db.VarChar(200)
+  lastname String @db.VarChar(200)
   email   String   @unique
-  password String
-  phone String
+  password String @db.VarChar(255)
+  phone String? @db.VarChar(40)
   role    Role     @relation(fields: [roleId],references: [roleId])
   roleId Int
   payments Payment[]
+  active  Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model CategoryEvent{
   categoryEventId Int @id @default(autoincrement()) @map("category_event_id")
-  name String
+  name String @db.VarChar(40)
   events Event[]
 }
 
@@ -45,7 +50,7 @@ model Event{
   categoryId Int
   startDate DateTime
   endDate DateTime
-  title String
+  title String @db.VarChar(100)
   description String
   scheduleImg String @db.VarChar(255)
   bannerImg String @db.VarChar(255)
@@ -53,13 +58,14 @@ model Event{
   stage Stage @relation(fields: [stageId],references: [stageId])
   stageId Int
   payments Payment[]
+  active  Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Country{
   countryId Int @id @default(autoincrement()) @map("country_id")
-  name String
+  name String @db.VarChar(40)
   stages Stage[]
 }
 
@@ -67,7 +73,7 @@ model Stage{
   stageId Int @id @default(autoincrement()) @map("stage_id")
   country Country @relation(fields: [countryId],references: [countryId])
   countryId Int
-  name String
+  name String @db.VarChar(100)
   capacity Int
   address String @db.VarChar(255)
   addressReferences String? @db.VarChar(100)
@@ -91,7 +97,7 @@ model StageSection{
 
 model PaymentMethod{
   paymentMethodId Int @id @default(autoincrement()) @map("payment_method_id")
-  name String @db.VarChar(50)
+  name String @db.VarChar(40)
   payments Payment[]
 }
 
@@ -104,7 +110,9 @@ model Payment{
   event Event @relation(fields: [eventId],references: [eventId])
   eventId Int
   paymentDetails PaymentDetail[]
+  active  Boolean @default(true)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PaymentDetail{
@@ -115,6 +123,9 @@ model PaymentDetail{
   paymentId Int
   quantity Int
   unitPrice Decimal
+  active  Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 
