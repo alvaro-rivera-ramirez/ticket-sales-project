@@ -1,5 +1,6 @@
 import { User } from '@users/data-access/entities/user.entity';
-import { encrypt } from '@utils/hash.utils';
+import { encrypt, compare } from '@utils/hash.utils';
+import { Exclude } from 'class-transformer';
 
 export class UserModel implements User {
 	userId: number;
@@ -7,6 +8,7 @@ export class UserModel implements User {
 	firstname: string;
 	lastname: string;
 	email: string;
+	@Exclude()
 	password: string;
 	phone: string;
 	roleId: number;
@@ -20,5 +22,9 @@ export class UserModel implements User {
 
 	async createPassword(password: string) {
 		this.password = await encrypt(password);
+	}
+
+	async checkPassword(_password: string): Promise<boolean> {
+		return await compare(_password, this.password);
 	}
 }

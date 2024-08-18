@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class UserRepository implements IUserRepository {
 	constructor(private readonly prismaService: PrismaService) {}
+
 	async findById(id: number): Promise<User | null> {
 		const userFound = await this.prismaService.user.findFirst({
 			where: {
@@ -16,10 +17,18 @@ export class UserRepository implements IUserRepository {
 			return null;
 		}
 
-		return {
-			...userFound
-		};
+		return userFound;
 	}
+
+	async findByEmail(email: string): Promise<User | null> {
+		const userFound = await this.prismaService.user.findFirst({ where: { email } });
+		if (!userFound) {
+			return null;
+		}
+
+		return userFound;
+	}
+
 	findAll(): Promise<User[]> {
 		throw new Error('Method not implemented.');
 	}

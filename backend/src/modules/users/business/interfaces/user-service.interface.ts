@@ -6,4 +6,5 @@ export interface IUserService {
 	findById(id: number): Promise<UserModel | null>;
 	update(data: Partial<UserModel>): Promise<void>;
 	delete(id: number): Promise<void>;
+	findByEmail(email: string): Promise<UserModel | null>;
 }
