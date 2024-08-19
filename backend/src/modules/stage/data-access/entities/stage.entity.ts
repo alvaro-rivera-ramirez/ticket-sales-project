@@ -6,6 +6,5 @@ export interface Stage extends BaseEntity {
 	name: string;
 	capacity: number;
 	address: string;
-	stagePartsImg: string;
 	addressReferences?: string;
 }

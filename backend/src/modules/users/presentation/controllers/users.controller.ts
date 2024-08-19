@@ -39,7 +39,6 @@ export class UserController {
 	async findOneById(@Param('id') id: number): Promise<UserModel> {
 		try {
 			const userDataModel = await this.userService.findById(id);
-			console.log(userDataModel);
 			if (!userDataModel) throw new NotFoundException('Usuario no encontrado');
 			return userDataModel;
 		} catch (error) {

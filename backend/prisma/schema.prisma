@@ -55,6 +55,7 @@ model Event{
   scheduleImg String @db.VarChar(255)
   bannerImg String @db.VarChar(255)
   capacity Int
+  stagePartsImg String @db.VarChar(255)
   stage Stage @relation(fields: [stageId],references: [stageId])
   stageId Int
   payments Payment[]
@@ -80,7 +81,6 @@ model Stage{
   name String @db.VarChar(100)
   capacity Int
   address String @db.VarChar(255)
-  stagePartsImg String @db.VarChar(255)
   addressReferences String? @db.VarChar(100)
   stageSections StageSection[]
   events Event[]

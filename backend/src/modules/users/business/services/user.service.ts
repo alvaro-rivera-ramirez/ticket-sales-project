@@ -45,7 +45,8 @@ export class UserService implements IUserService {
 
 	async update(updateUserDto: UpdateUserDto): Promise<void> {
 		const userData = new UserModel(updateUserDto);
-		this.userRepository.update(userData);
+		await this.userRepository.update(userData);
+		return;
 	}
 
 	async delete(id: number): Promise<void> {
