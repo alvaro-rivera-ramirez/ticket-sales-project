@@ -11,6 +11,9 @@ export class UserRepository implements IUserRepository {
 		const userFound = await this.prismaService.user.findFirst({
 			where: {
 				userId: id
+			},
+			include: {
+				role: true
 			}
 		});
 		if (!userFound) {
@@ -21,7 +24,12 @@ export class UserRepository implements IUserRepository {
 	}
 
 	async findByEmail(email: string): Promise<User | null> {
-		const userFound = await this.prismaService.user.findFirst({ where: { email } });
+		const userFound = await this.prismaService.user.findFirst({
+			where: { email },
+			include: {
+				role: true
+			}
+		});
 		if (!userFound) {
 			return null;
 		}
@@ -42,6 +50,9 @@ export class UserRepository implements IUserRepository {
 				email: entity.email,
 				password: entity.password,
 				roleId: entity.roleId
+			},
+			include: {
+				role: true
 			}
 		});
 		return {
