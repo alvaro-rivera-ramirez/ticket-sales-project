@@ -1,11 +1,39 @@
+import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '@core/services/prisma.service';
+import { PaginatedResult, PaginationParams } from '@core/interfaces/pagination.generic.interface';
 import { IUserRepository } from '@users/data-access/repositories/user-repository.interface';
 import { User } from '../entities/user.entity';
-import { PrismaService } from '@core/services/prisma.service';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
 	constructor(private readonly prismaService: PrismaService) {}
+
+	async findAllPaginated(params: PaginationParams<User, Prisma.UserWhereInput>): Promise<PaginatedResult<User>> {
+		const { page = 1, pageSize = 8, where } = params;
+		const totalSkips: number = (page - 1) * pageSize;
+		const [totalItems, data] = await Promise.all([
+			this.prismaService.user.count({ where: { ...where, active: true } }),
+			this.prismaService.user.findMany({
+				where: { ...where, active: true },
+				skip: totalSkips,
+				take: pageSize,
+				include: {
+					role: true
+				}
+			})
+		]);
+
+		const totalPages = Math.ceil(totalItems / pageSize);
+
+		return {
+			data,
+			totalItems,
+			totalPages,
+			currentPage: page,
+			pageSize: pageSize
+		};
+	}
 
 	async findById(id: number): Promise<User | null> {
 		const userFound = await this.prismaService.user.findFirst({
@@ -60,17 +88,14 @@ export class UserRepository implements IUserRepository {
 		};
 	}
 	async update(entity: User): Promise<void> {
+		const { userId, role, ...propsUser } = entity;
+
 		await this.prismaService.user.update({
 			where: {
 				userId: entity.userId
 			},
 			data: {
-				dni: entity.dni,
-				firstname: entity.firstname,
-				lastname: entity.lastname,
-				email: entity.email,
-				phone: entity.phone,
-				roleId: entity.roleId
+				...propsUser
 			}
 		});
 		return;

@@ -1,15 +1,17 @@
 import { Type } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsOptional, IsPositive, IsString, IsStrongPassword } from 'class-validator';
+import { IsAlpha, IsEmail, IsNotEmpty, IsOptional, IsPositive, IsString, IsStrongPassword } from 'class-validator';
 
 export class CreateUserDto {
 	@IsString()
 	@IsNotEmpty()
 	dni: string;
 
+	@IsAlpha()
 	@IsString()
 	@IsNotEmpty()
 	firstname: string;
 
+	@IsAlpha()
 	@IsString()
 	@IsNotEmpty()
 	lastname: string;

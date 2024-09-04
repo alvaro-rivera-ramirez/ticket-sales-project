@@ -8,6 +8,7 @@ export class ErrorBase extends Error {
 	}
 
 	static handleException(error: Error | HttpException) {
+		console.log(error);
 		if (error instanceof ErrorBase) {
 			throw new HttpException(error.message, error.status);
 		}

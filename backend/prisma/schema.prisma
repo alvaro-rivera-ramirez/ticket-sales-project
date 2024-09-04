@@ -82,7 +82,6 @@ model Stage{
   capacity Int
   address String @db.VarChar(255)
   addressReferences String? @db.VarChar(100)
-  stageSections StageSection[]
   events Event[]
   active  Boolean @default(true)
   createdAt DateTime @default(now())
@@ -94,8 +93,6 @@ model StageSection{
   name String @db.VarChar(100)
   capacity Int
   price Decimal
-  stage Stage @relation(fields: [stageId],references: [stageId])
-  stageId Int
   event Event @relation(fields: [eventId],references: [eventId])
   eventId Int
   paymentDetails PaymentDetail[]

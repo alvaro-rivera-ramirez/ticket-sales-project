@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@core/services/prisma.service';
 import { Country } from '../entities/country.entity';
 import { ICountryRepository } from './country-repository.interface';
+import { PaginationParams, PaginatedResult } from '@core/interfaces/pagination.generic.interface';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CountryRepository implements ICountryRepository {
 	constructor(private readonly prismaService: PrismaService) {}
+	findAllPaginated(params: PaginationParams<Country, Prisma.CountryWhereInput>): Promise<PaginatedResult<Country>> {
+		throw new Error('Method not implemented.');
+	}
+
 	async findById(id: number): Promise<Country | null> {
 		const countryFound = await this.prismaService.country.findFirst({
 			where: {

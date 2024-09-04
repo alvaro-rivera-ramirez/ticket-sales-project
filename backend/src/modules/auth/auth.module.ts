@@ -9,6 +9,7 @@ import { AuthController } from './presentation/auth.controller';
 import { AuthService } from './business/services/auth.service';
 import { LocalStrategy, JwtStrategy, JwtRefreshStrategy } from './presentation/strategies';
 import { RolesGuard } from '@core/guards/role.guard';
+import { GoogleStrategy } from './presentation/strategies/google.strategyt';
 
 const configService = new ConfigService();
 
@@ -28,6 +29,7 @@ const configService = new ConfigService();
 		LocalStrategy,
 		JwtStrategy,
 		JwtRefreshStrategy,
+		GoogleStrategy,
 		{ provide: APP_GUARD, useClass: JwtAuthGuard },
 		{ provide: APP_GUARD, useClass: RolesGuard }
 	],

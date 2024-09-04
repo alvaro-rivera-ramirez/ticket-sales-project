@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { IRepository } from '@core/interfaces/repository.interface';
 import { Stage } from '../entities/stage.entity';
 import { PrismaService } from '@core/services/prisma.service';
+import { IStageRepository } from './stage-repository.interface';
+import { PaginationParams, PaginatedResult } from '@core/interfaces/pagination.generic.interface';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
-export class StageRepository implements IRepository<Stage> {
+export class StageRepository implements IStageRepository {
 	constructor(private readonly prismaService: PrismaService) {}
+	findAllPaginated(params: PaginationParams<Stage, Prisma.StageWhereInput>): Promise<PaginatedResult<Stage>> {
+		throw new Error('Method not implemented.');
+	}
+
 	async findById(id: number): Promise<Stage> {
 		const stageFound = await this.prismaService.stage.findFirst({
 			where: {

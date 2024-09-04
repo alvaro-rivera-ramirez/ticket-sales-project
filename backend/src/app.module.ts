@@ -13,8 +13,8 @@ import { StageModule } from './modules/stage/stage.module';
 			envFilePath: `.env`
 		}),
 		CoreModule,
-		UsersModule,
 		AuthModule,
+		UsersModule,
 		StageModule
 	],
 	controllers: [AppController],

@@ -7,6 +7,7 @@ import { AuthModel } from '../models/auth.model';
 import { JwtPayload } from '../types/jwt-payload.type';
 import { RoleModel } from '@users/business/models/role.model';
 import { ConfigService } from '@nestjs/config';
+import { UserModel } from '@users/business/models/user.model';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -51,5 +52,12 @@ export class AuthService implements IAuthService {
 	async refreshToken(payloadData: JwtPayload): Promise<Omit<IToken, 'refresh_token'>> {
 		const accessToken = await this.jwtService.signAsync(payloadData);
 		return { access_token: accessToken };
+	}
+
+	async validateGoogleUser(userData: UserModel): Promise<UserModel> {
+		const user = await this.userService.findByEmail(userData.email);
+
+		if (user) return user;
+		return await this.userService.create(userData, false);
 	}
 }

@@ -1,17 +1,52 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { IUserService } from '../interfaces/user-service.interface';
 import { UserRepository } from '@users/data-access/repositories/user.repository';
 import { UpdateUserDto } from '@users/presentation/dto/update-user.dto';
 import { UserModel } from '../models/user.model';
 import { Prisma } from '@prisma/client';
 import { ErrorBase } from '@core/errors/error.base';
+import { PaginationParamsEssentials, PaginatedResult } from '@core/interfaces/pagination.generic.interface';
+import { RoleModel } from '../models/role.model';
 
 @Injectable()
 export class UserService implements IUserService {
 	constructor(private readonly userRepository: UserRepository) {}
-	async create(userData: UserModel): Promise<UserModel> {
+
+	generatedParamsSearch(search: string): Prisma.UserWhereInput {
+		return {
+			OR: [
+				{
+					firstname: {
+						mode: 'insensitive',
+						contains: search
+					}
+				},
+				{
+					lastname: {
+						mode: 'insensitive',
+						contains: search
+					}
+				}
+			]
+		};
+	}
+	async findAllPaginated(paginationParams: PaginationParamsEssentials): Promise<PaginatedResult<UserModel>> {
+		const { page = 1, pageSize = 8, search = '' } = paginationParams;
+
+		const newSearch = search.length > 0 ? this.generatedParamsSearch(search) : {};
+		const results = await this.userRepository.findAllPaginated({ page, pageSize, where: newSearch });
+		const dataFormated = results.data.map((u) => new UserModel({ ...u, role: new RoleModel(u.role) }));
+
+		return {
+			...results,
+			data: dataFormated
+		};
+	}
+	async create(userData: UserModel, withPassword: boolean = true): Promise<UserModel> {
 		try {
-			await userData.createPassword(userData.password);
+			if (withPassword) {
+				await userData.createPassword(userData.password);
+			}
 			userData.userId = (await this.userRepository.save(userData)).userId;
 			return userData;
 		} catch (e) {
@@ -41,13 +76,20 @@ export class UserService implements IUserService {
 		return new UserModel(userFound);
 	}
 
-	async update(updateUserDto: UpdateUserDto): Promise<void> {
-		const userData = new UserModel(updateUserDto);
+	async update(userData: UserModel): Promise<void> {
+		await this.validateExistUser(userData.userId);
+		console.log(userData);
 		await this.userRepository.update(userData);
 		return;
 	}
 
 	async delete(id: number): Promise<void> {
+		await this.validateExistUser(id);
 		return await this.userRepository.delete(id);
+	}
+
+	async validateExistUser(id: number): Promise<void> {
+		const userExists = await this.findById(id);
+		if (!userExists) throw new NotFoundException('Usuario no encontrado');
 	}
 }
