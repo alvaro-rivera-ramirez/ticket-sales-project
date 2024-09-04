@@ -55,9 +55,11 @@ model Event{
   scheduleImg String @db.VarChar(255)
   bannerImg String @db.VarChar(255)
   capacity Int
+  stagePartsImg String @db.VarChar(255)
   stage Stage @relation(fields: [stageId],references: [stageId])
   stageId Int
   payments Payment[]
+  stageSections StageSection[]
   active  Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -67,6 +69,9 @@ model Country{
   countryId Int @id @default(autoincrement()) @map("country_id")
   name String @db.VarChar(40)
   stages Stage[]
+  active  Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Stage{
@@ -77,8 +82,8 @@ model Stage{
   capacity Int
   address String @db.VarChar(255)
   addressReferences String? @db.VarChar(100)
-  stageSections StageSection[]
   events Event[]
+  active  Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -88,8 +93,8 @@ model StageSection{
   name String @db.VarChar(100)
   capacity Int
   price Decimal
-  stage Stage @relation(fields: [stageId],references: [stageId])
-  stageId Int
+  event Event @relation(fields: [eventId],references: [eventId])
+  eventId Int
   paymentDetails PaymentDetail[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

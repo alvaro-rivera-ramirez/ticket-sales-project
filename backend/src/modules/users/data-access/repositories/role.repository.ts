@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@core/services/prisma.service';
 import { Role } from '../entities/role.entity';
 import { IRoleRepository } from './role-repository.interface';
+import { PaginationParams, PaginatedResult } from '@core/interfaces/pagination.generic.interface';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class RoleRepository implements IRoleRepository {
 	constructor(private readonly prismaService: PrismaService) {}
+	findAllPaginated(params: PaginationParams<Role, Prisma.RoleWhereInput>): Promise<PaginatedResult<Role>> {
+		throw new Error('Method not implemented.');
+	}
 
 	findById(id: number): Promise<Role> {
 		throw new Error('Method not implemented.');

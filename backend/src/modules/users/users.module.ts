@@ -9,7 +9,8 @@ import { CoreModule } from '@core/core.module';
 
 @Module({
 	imports: [CoreModule],
+	providers: [RoleService, RoleRepository, UserRepository, UserService],
 	controllers: [RoleController, UserController],
-	providers: [RoleService, RoleRepository, UserService, UserRepository]
+	exports: [UserRepository, UserService]
 })
 export class UsersModule {}
