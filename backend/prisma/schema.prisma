@@ -133,4 +133,9 @@ model PaymentDetail{
   updatedAt DateTime @updatedAt
 }
 
+model StageSectionImage{
+  stageSectionImageId Int @id @default(autoincrement()) @map("stage_section_image_id")
+  url String @db.VarChar(255)
+  description String @db.Text
+}
 
